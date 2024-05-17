@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -12,7 +13,8 @@ func main() {
 	var result int
 	fmt.Println("Введите строку")
 	vvod, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-	fmt.Println(vvod)
+	r := regexp.MustCompile("\\s+")
+	vvod = r.ReplaceAllString(vvod, "")
 
 	firstOperand, secondOperand, doit, flagRim := readString(vvod)
 	if doit == "Alarm!!!" {
@@ -47,48 +49,32 @@ func calc(firstOperand, secondOperand int, doit string) (result int) {
 	return
 }
 func readString(vvod string) (firstOperand, secondOperand int, doit string, flagRim bool) {
-	var iterNumber string
 	var flagArab bool
-	for i := 0; i < len(vvod); i++ {
-		if vvod[i] == ' ' || len(vvod)-1 == i {
 
-			if iterNumber == "+" || iterNumber == "-" || iterNumber == "/" || iterNumber == "*" {
-				doit = iterNumber
-				iterNumber = ""
+	r := regexp.MustCompile(`\+|\-\*|\/`)
+	arr := r.Split(vvod, -1)
+	doit = r.FindString(vvod)
 
-				continue
-			}
-
-			if strings.Contains(iterNumber, "I") || strings.Contains(iterNumber, "X") || strings.Contains(iterNumber, "V") {
-				flagRim = true
-
-				if firstOperand == 0 {
-					firstOperand = translateFrom(iterNumber)
-				} else {
-					secondOperand = translateFrom(iterNumber)
-				}
-			} else {
-				if flagRim {
-					println("Alarm!!!!")
-					break
-				}
-				if firstOperand == 0 {
-					flagArab = true
-					firstOperand, _ = strconv.Atoi(iterNumber)
-				} else {
-					flagArab = true
-					secondOperand, _ = strconv.Atoi(iterNumber)
-				}
-			}
-
-			iterNumber = ""
-		} else {
-			iterNumber = iterNumber + string(vvod[i])
-		}
+	if strings.Contains(arr[0], "I") || strings.Contains(arr[0], "X") || strings.Contains(arr[0], "V") {
+		flagRim = true
+		firstOperand = translateFrom(arr[0])
+	} else {
+		flagArab = true
+		firstOperand, _ = strconv.Atoi(arr[0])
 	}
+
+	if strings.Contains(arr[1], "I") || strings.Contains(arr[1], "X") || strings.Contains(arr[1], "V") {
+		flagRim = true
+		secondOperand = translateFrom(arr[1])
+	} else {
+		flagArab = true
+		secondOperand, _ = strconv.Atoi(arr[1])
+	}
+
 	if flagRim && flagArab {
 		return 0, 0, "Alarm!!!", flagRim
 	}
+
 	return
 }
 func translateFrom(item string) (result int) {
