@@ -51,7 +51,7 @@ func calc(firstOperand, secondOperand int, doit string) (result int) {
 func readString(vvod string) (firstOperand, secondOperand int, doit string, flagRim bool) {
 	var flagArab bool
 
-	r := regexp.MustCompile(`\+|\-\*|\/`)
+	r := regexp.MustCompile(`\+|\-|\*|\/`)
 	arr := r.Split(vvod, -1)
 	doit = r.FindString(vvod)
 
@@ -71,8 +71,8 @@ func readString(vvod string) (firstOperand, secondOperand int, doit string, flag
 		secondOperand, _ = strconv.Atoi(arr[1])
 	}
 
-	if flagRim && flagArab {
-		return 0, 0, "Alarm!!!", flagRim
+	if flagRim && flagArab || secondOperand > 10 || firstOperand > 10 {
+		panic(fmt.Sprintf("ВЫвожу панику и останавливаю программу!!!"))
 	}
 
 	return
