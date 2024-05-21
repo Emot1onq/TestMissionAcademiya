@@ -24,6 +24,9 @@ func main() {
 		result = calc(firstOperand, secondOperand, doit)
 
 		if flagRim {
+			if result < 1 {
+				panic(fmt.Sprintf("ВЫвожу панику и останавливаю программу!!!"))
+			}
 			fmt.Println(translateTo(result))
 		} else {
 			fmt.Println(result)
